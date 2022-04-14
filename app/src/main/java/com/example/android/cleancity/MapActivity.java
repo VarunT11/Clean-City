@@ -231,6 +231,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 double latitude, longitude;
                 long id, level, area;
+                Log.d(TAG, dataSnapshot.toString());
                 id = (Long)dataSnapshot.child("id").getValue();
                 latitude = (Double)dataSnapshot.child("latitude").getValue();
                 longitude = (Double)dataSnapshot.child("longitude").getValue();
