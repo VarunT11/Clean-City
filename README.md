@@ -8,9 +8,3 @@ Android app of an IoT based project. We have tried to enhance the already follow
   <img src = "https://i.imgur.com/zydKkcH.png" width = 367 height = 648><br>
   <img src = "https://i.imgur.com/MZdSnU0.png" width = 367 height = 648><br>
 </p>
-
-## Contributers
-Android app is developed by [Harshit Maheshwari](https://github.com/harshitm98) and hardware product was developed by [Neeladri Biswas](https://github.com/Thedeathslayer1), [Druvang Wagh](https://github.com/Druv98) and [Shaishav Jain](https://github.com/dragonslayer01).
-
-### Link to hardware product
-[github.com/Druv98/smart-dustbin](https://github.com/Druv98/Smart-Dustbin)
