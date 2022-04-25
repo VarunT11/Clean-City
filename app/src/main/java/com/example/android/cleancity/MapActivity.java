@@ -12,6 +12,7 @@ import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
+import android.util.Pair;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -40,6 +41,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
+import com.google.maps.android.SphericalUtil;
 
 import static com.google.android.gms.maps.GoogleMap.*;
 
@@ -48,6 +50,16 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import java.util.Vector;
+
+
+
+
+
 
 public class MapActivity extends AppCompatActivity implements OnMapReadyCallback,OnMarkerClickListener {
 
@@ -62,7 +74,11 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
     private FusedLocationProviderClient mFusedLocationProviderClient;
     private CardView cardView;
+    private Button showBestPath;
+    dustbinAdapter adapter;
 
+    public Vector<Pair<Double,Double>> Pos=new Vector<Pair<Double,Double>>();
+    public Vector<dustbin> dustbins=new Vector<dustbin>();
     private BitmapDescriptor getMarkerIconFromDrawable(Drawable drawable) {
         Canvas canvas = new Canvas();
         Bitmap bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
@@ -102,7 +118,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
     private void markerAdder(GoogleMap googleMap, long id, long level, long area,
                              double longitude, double latitude){
-        if(level == 1){
+        if(level == 0){
             Drawable dustbin = getResources().getDrawable(R.drawable.ic_dustbin_green);
             BitmapDescriptor markerIcon = getMarkerIconFromDrawable(dustbin);
 
@@ -111,7 +127,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                     .title("Dustbin: " + id)
                     .icon(markerIcon));
         }
-        else if(level == 2){
+        else if(level == 1){
             Drawable dustbin = getResources().getDrawable(R.drawable.ic_dustbin_yellow);
             BitmapDescriptor markerIcon = getMarkerIconFromDrawable(dustbin);
 
@@ -120,7 +136,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                     .title("Dustbin: " + id)
                     .icon(markerIcon));
         }
-        else if(level == 3){
+        else if(level >1){
             Drawable dustbin = getResources().getDrawable(R.drawable.ic_dustbin_red);
             BitmapDescriptor markerIcon = getMarkerIconFromDrawable(dustbin);
 
@@ -159,6 +175,18 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             }
         });
         addingFirebaseData(mMap);
+
+//        dustbins.add(new dustbin(44,3,81.89797,25.48956298));
+
+        System.out.println("The vector is:"+dustbins);
+
+        RecyclerView mRecyclerView = (RecyclerView) findViewById(R.id.rec_dustbins);
+        LinearLayoutManager mLayoutManager = new LinearLayoutManager(MapActivity.this);
+        mRecyclerView.setLayoutManager(mLayoutManager);
+        adapter=new dustbinAdapter(dustbins,MapActivity.this);
+        adapter.notifyDataSetChanged();
+        mRecyclerView.setAdapter(adapter);
+
         getDeviceLocation();
     }
 
@@ -224,11 +252,14 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         }
     }
     public void addingFirebaseData(final GoogleMap googleMap){
+        Pos.clear();
+        showBestPath=findViewById(R.id.btn_pathFinder);
         FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
         final DatabaseReference reference = firebaseDatabase.getReference("dusbins");
         reference.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                dustbin Du;
                 double latitude, longitude;
                 long id, level, area;
                 Log.d(TAG, dataSnapshot.toString());
@@ -237,8 +268,17 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 longitude = (Double)dataSnapshot.child("longitude").getValue();
                 level = (Long)dataSnapshot.child("level").getValue();
                 area = (Long)dataSnapshot.child("area").getValue();
+                Du=new dustbin(id,level,latitude,longitude);
+                dustbins.add(Du);
+                adapter.notifyDataSetChanged();
+
+                System.out.println("the level is "+level);
+                if(level==0) {
+                    Pos.add(new Pair<Double,Double>(latitude,longitude));
+                }
                 Log.d(TAG, "onChildAdded:" + "id: " + id +latitude + longitude + level + area);
                 markerAdder(googleMap,id,level,area,latitude,longitude);
+//                Toast.makeText(MapActivity.this,""+Pos.toString(),Toast.LENGTH_LONG).show();
             }
 
             @Override
@@ -264,6 +304,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         });
     }
 
+
+
     @Override
     public boolean onMarkerClick(Marker marker) {
         Log.d(TAG, "onMarkerClick: " + marker.getTitle());
@@ -287,7 +329,11 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
                 if(id_s.equals(dataSnapshot.child("id").getValue().toString())){
                     long p = (Long)dataSnapshot.child("level").getValue();
-                    if(p == 1){
+                    if(p == 0){
+                        percentage.setTextSize(72);
+                        percentage.setText("<50%");
+                    }
+                    else if(p == 1){
                         percentage.setTextSize(72);
                         percentage.setText("50%");
                     }
@@ -329,5 +375,26 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             }
         });
         return false;
+    }
+
+    public void showBestPath(View view) {
+//        Toast.makeText(MapActivity.this,"Lawda lelo",Toast.LENGTH_SHORT).show();
+        int n=Pos.size();
+        Double adjMat[][]=new Double[n][n];
+        for(int i=0;i<n;i++){
+            for(int j=i;j<n;j++){
+                LatLng a=new LatLng(Pos.get(i).first,Pos.get(i).second);
+                LatLng b=new LatLng(Pos.get(j).first,Pos.get(j).second);
+                Double distance = SphericalUtil.computeDistanceBetween(a,b);
+                adjMat[i][j]=distance;
+                adjMat[j][i]=distance;
+            }
+        }
+        for(int i=0;i<n;i++){
+            for(int j=0;j<n;j++){
+                System.out.println(adjMat[i][j]+" ");
+            }
+            System.out.println("\n");
+        }
     }
 }
