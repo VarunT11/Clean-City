@@ -9,13 +9,14 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.util.ArrayList;
 import java.util.Vector;
 
 public class dustbinAdapter extends RecyclerView.Adapter<dustbinAdapter.ViewHolder> {
     Context context;
-    Vector<dustbin> dustbins;
+    ArrayList<dustbin> dustbins;
 
-    public dustbinAdapter(Vector<dustbin> dustbins, Context context) {
+    public dustbinAdapter(ArrayList<dustbin> dustbins, Context context) {
         this.dustbins = dustbins;
         this.context = context;
     }

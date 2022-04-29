@@ -5,6 +5,8 @@ public class dustbin {
     private long level;
     private Double longitude;
     private Double latitude;
+    private long area;
+    private float rate;
 
     public long getId() {
         return id;
@@ -22,10 +24,20 @@ public class dustbin {
         return latitude;
     }
 
-    public dustbin(long id, long level, Double longitude, Double latitude) {
+    public long getArea() {
+        return area;
+    }
+
+    public float getRate() {
+        return rate;
+    }
+
+    public dustbin(long id, long level, Double latitude, Double longitude, long area, float rate) {
         this.id = id;
         this.level = level;
         this.longitude = longitude;
         this.latitude = latitude;
+        this.area = area;
+        this.rate = rate;
     }
 }

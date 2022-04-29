@@ -3,7 +3,13 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/IoT/Clean-City/app/src/main/res/layout/activity_dashboard.xml" value="0.20380434782608695" />
+        <entry key="..\:/IoT/Clean-City/app/src/main/res/layout/activity_main.xml" value="0.20380434782608695" />
         <entry key="..\:/IoT/Clean-City/app/src/main/res/layout/activity_map.xml" value="0.10989583333333333" />
+        <entry key="..\:/IoT/Clean-City/app/src/main/res/layout/fragment_dustbin_list.xml" value="0.20380434782608695" />
+        <entry key="..\:/IoT/Clean-City/app/src/main/res/layout/fragment_dustbins_list.xml" value="0.20380434782608695" />
+        <entry key="..\:/IoT/Clean-City/app/src/main/res/layout/fragment_map.xml" value="0.20380434782608695" />
+        <entry key="..\:/IoT/Clean-City/app/src/main/res/menu/main_menu.xml" value="0.25" />
         <entry key="..\:/Users/naray/OneDrive/Documents/GitHub/Clean-City/app/src/main/res/layout/activity_map.xml" value="0.2" />
         <entry key="..\:/Users/naray/OneDrive/Documents/GitHub/Clean-City/app/src/main/res/layout/cutstom_dialog.xml" value="0.8289473684210527" />
         <entry key="..\:/Users/naray/OneDrive/Documents/GitHub/Clean-City/app/src/main/res/layout/dustbin_sample.xml" value="0.4" />

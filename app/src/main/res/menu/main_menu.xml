@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/menuShowPath"
+        android:title="Show Best Path" />
+
+    <item
+        android:id="@+id/menuDustbinList"
+        android:title="Show Dustbins List" />
+
+</menu>
